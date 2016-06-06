@@ -1,0 +1,40 @@
+import "poppy/rpc_option.proto";
+import "poppy/rpc_message.proto";
+
+enum  SuspicionStatus{
+    alive = 1001;
+    suspect = 1002;
+    dead = 1003;
+}
+
+message NodeStatus
+{
+    optional string ip = 1;
+    optional int64 port = 2;
+    optional SuspicionStatus status = 3;
+    optional int64 incarnation = 4;
+    optional int64 status_change_ts = 5; 
+}
+
+message JoinReq
+{
+    required string join_host = 1;    
+}
+
+message JoinResp
+{
+    required bool success = 1;
+    optional string err_msg = 2;
+}
+
+message MembersResp
+{
+    repeated NodeStatus member_list = 1;
+}
+
+service SWIMServer {
+	option (poppy.service_timeout) = 500;
+    rpc Join(JoinReq) returns(JoinResp);
+    rpc Members(poppy.EmptyRequest)   returns(MembersResp);
+}
+
